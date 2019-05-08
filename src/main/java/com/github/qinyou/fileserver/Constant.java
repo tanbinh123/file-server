@@ -11,7 +11,7 @@ public class Constant {
     public static final String FILE_TYPE_NOT_LIMIT = " 类型文件禁止上传";
     public static final String FILE_EXIST = "文件已存在,请稍后在上传";
 
-    public static final String PARAM_PATH_EMPTY="path 参数不可为空";
-    public static final String DOWNLOAD_FILE_NOT_EXIST="下载文件不存在";
+    public static final String PARAM_PATH_EMPTY = "path 参数不可为空";
+    public static final String DOWNLOAD_FILE_NOT_EXIST = "下载文件不存在";
 
 }

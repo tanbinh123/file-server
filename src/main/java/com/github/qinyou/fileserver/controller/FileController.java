@@ -74,25 +74,25 @@ public class FileController extends BaseController {
     /**
      * 文件下载
      */
-    public void download(){
+    public void download() {
         String path = getPara("path");
         String name = getPara("name");
-        if(StrKit.isBlank(path)){
+        if (StrKit.isBlank(path)) {
             renderFail(Constant.PARAM_PATH_EMPTY);
             return;
         }
-        path = path.replace("$","/");
-        path = PathKit.getWebRootPath()+"/"+path;
+        path = path.replace("$", "/");
+        path = PathKit.getWebRootPath() + "/" + path;
         File downloadFile = new File(path);
-        if(!downloadFile.exists()){
+        if (!downloadFile.exists()) {
             renderFail(Constant.DOWNLOAD_FILE_NOT_EXIST);
             return;
         }
-        if(StrKit.isBlank(name)){
+        if (StrKit.isBlank(name)) {
             renderFile(downloadFile);
-        }else{
-            String fileName = name.contains(".")?name:name+"."+FilenameUtils.getExtension( downloadFile.getName());
-            renderFile(downloadFile,fileName);
+        } else {
+            String fileName = name.contains(".") ? name : name + "." + FilenameUtils.getExtension(downloadFile.getName());
+            renderFile(downloadFile, fileName);
         }
     }
 }
