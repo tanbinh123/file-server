@@ -1,0 +1,22 @@
+# 开发模式
+devMode=true
+
+# id 生成算法使用 (集群部署应该修改此处，均 0~31)
+workerId=0
+datacenterId=0
+
+# 服务授权使用
+authPwd=fileServerPwd...
+authIdle=24
+
+# 文件上传下载
+uploadPath=upload
+maxPostSize=102400000
+imageType=png,jpg,jpeg,gif,bmp
+mediaType=swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb,mp4
+officeType=doc,docx,pdf,xls,xlsx,csv,ppt,pptx,
+fileType=htm,html,xml,txt,zip,rar,gz,bz2
+imagePath=upload/image
+mediaPath=upload/media
+officePath=upload/office
+filePath=upload/file
