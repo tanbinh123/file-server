@@ -1,12 +1,14 @@
 package com.github.qinyou.fileserver.controller;
 
-import com.github.qinyou.fileserver.Constant;
-import com.github.qinyou.fileserver.interceptor.UploadInterceptor;
-import com.github.qinyou.fileserver.model.SingleRet;
+
+import com.github.qinyou.fileserver.bean.ComRet;
+import com.github.qinyou.fileserver.interceptor.SecurityInterceptor;
 import com.github.qinyou.fileserver.service.FileService;
 import com.jfinal.aop.Before;
+import com.jfinal.core.ActionKey;
+import com.jfinal.i18n.I18n;
+import com.jfinal.i18n.Res;
 import com.jfinal.kit.PathKit;
-import com.jfinal.kit.StrKit;
 import com.jfinal.upload.UploadFile;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -21,17 +23,19 @@ import java.io.IOException;
  * @author chuang
  */
 @Slf4j
-public class FileController extends BaseController {
+public class UploadController extends BaseController {
+    private static final Res res = I18n.use(lang);
 
     /**
      * 单文件上传
      */
-    @Before(UploadInterceptor.class)
+    @ActionKey("/common/upload")
+    @Before(SecurityInterceptor.class)
     public void upload() throws IOException {
         UploadFile uploadFile = getFile("file");
 
         if (uploadFile == null) {
-            renderFail(Constant.PARAM_FILE_EMPTY);
+            renderFail(res.get("PARAM_FILE_EMPTY"));
             return;
         }
 
@@ -41,58 +45,35 @@ public class FileController extends BaseController {
         // 文件类型非法
         if (!FileService.checkFileType(extension)) {
             FileService.deleteFile(uploadFile.getFile());
-            renderFail(extension + Constant.FILE_TYPE_NOT_LIMIT);
+            renderFail(res.format("FILE_TYPE_NOT_LIMIT", extension));
             return;
         }
 
         // 文件保存
-        String relativePath = FileService.fileRelativeSavePath(extension);
+        // basePath 一般是应用标识，多应用文件分目录
+        String relativePath = FileService.fileRelativeSavePath(extension, get("basePath"));
         File saveFile = new File(PathKit.getWebRootPath() + "/" + relativePath);
         if (saveFile.exists()) {
-            // 应该 不会发生
+            // 正常情况 不会发生
             FileService.deleteFile(uploadFile.getFile());
-            renderFail(originalFileName + Constant.FILE_EXIST);
+            renderFail(res.format("FILE_EXIST", originalFileName));
             return;
         }
 
         FileUtils.copyFile(uploadFile.getFile(), saveFile);
         FileService.deleteFile(uploadFile.getFile());
 
-        SingleRet singleRet = new SingleRet();
+        ComRet singleRet = new ComRet();
         singleRet.setName(originalFileName);
         singleRet.setPath(relativePath);
         long sizeL = saveFile.length();
         singleRet.setSizeL(sizeL);
         singleRet.setSize(FileUtils.byteCountToDisplaySize(sizeL));
         StringBuffer url = getRequest().getRequestURL();
-        String uri = url.delete(url.length() - getRequest().getRequestURI().length(), url.length()).append(getRequest().getServletContext().getContextPath()).append("/").toString();
+        String uri = url.delete(url.length() - getRequest().getRequestURI().length(), url.length())
+                .append(getRequest().getServletContext().getContextPath()).append("/").toString();
         singleRet.setUri(uri + relativePath);
 
         renderOk(singleRet);
-    }
-
-    /**
-     * 文件下载
-     */
-    public void download() {
-        String path = getPara("path");
-        String name = getPara("name");
-        if (StrKit.isBlank(path)) {
-            renderFail(Constant.PARAM_PATH_EMPTY);
-            return;
-        }
-        path = path.replace("$", "/");
-        path = PathKit.getWebRootPath() + "/" + path;
-        File downloadFile = new File(path);
-        if (!downloadFile.exists()) {
-            renderFail(Constant.DOWNLOAD_FILE_NOT_EXIST);
-            return;
-        }
-        if (StrKit.isBlank(name)) {
-            renderFile(downloadFile);
-        } else {
-            String fileName = name.contains(".") ? name : name + "." + FilenameUtils.getExtension(downloadFile.getName());
-            renderFile(downloadFile, fileName);
-        }
     }
 }

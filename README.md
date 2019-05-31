@@ -1,71 +1,40 @@
 # file-server
-一个独立运行，支持文件上传下载的 web server, 多应用环境 下 公共的文件上传下载服务。
-  
-## 编译启动
-```
+一个独立运行，支持文件跨域上传、下载的 web server。多应用环境下公共服务。
+
+1. 密钥授权机制 md5( md5( secret+timestamp ) + timestamp ) 
+2. 分应用、分文件类型、分日期存盘 ，多语言响应提示信息
+
+#### 编译启动
+
+```Shell
 git clone https://github.com/qinyou/file-server.git
 cd file-server
 mvn clean package
 cd target/file-server-release/file-server
 start.bat 或 start.sh
 ```
-## 调用方式 
-1. 上传   http://localhost:8089/file/upload  
-2. 下载   http://localhost:8089/file/download  
 
-```javascript
-var form_data = new FormData();
-// 文件input
-var file_data = $("#img_input").prop("files")[0];
-// 时间戳
-form_data.append("timestamp", "1557284842861");
-// 授权密文, 加密方式 MD5( MD5(authPwd+timestamp) + timestamp )
-form_data.append("authToken", "eed079688545ca9877e5d0d366104729");
-// 文件
-form_data.append("file", file_data);
+#### 调用方式 
+1. 公共上传   http://localhost:8089/common/upload  
+2. 公共下载   http://localhost:8089/common/download  
+3. 更多自行扩展...
 
-$.ajax({
-    type: "POST",
-    url: "http://localhost:8089/file/upload",
-    dataType: "json",
-    crossDomain: true, 
-    processData: false, 
-    contentType: false, 
-    data: form_data,
-    success:function(data){
-        $('#result').html(JSON.stringify(data));
-        console.log(JSON.stringify(data,null, '\t'));
-        if(data.state == 'ok'){
-            var path = data.data.path.replace(/\//gm,'$'); // 左斜杠 替换为 美元符合
-            
-            // 文件下载链接
-            console.log('文件下载链接：http://localhost:8089/file/download?path='+path+'&name='+data.data.name);
-        }
+上传成功响应:
 
-    },
-    fail:function(x,h,r){
-        alert(x + "  " + h + " " + r);
-    }
-});
-
-```
-具体调用见 https://github.com/qinyou/file-server/blob/master/src/main/webapp/test.html  
-
-上传文件响应
-```json
+```Json
 {
 	"data": {
 		"name": "timg.jpg",
 		"path": "upload/image/2019_05_08/575776561135878144.jpg",
 		"size": "33 KB",
 		"sizeL": 33809,
-		"uri": "http://localhost:8089/upload/image/2019_05_08/575776561135878144.jpg"
+		"uri": "http://localhost:8089/upload/crm/image/2019_05_08/575776561135878144.jpg"
 	},
 	"state": "ok",
 	"timestamp": 1557317429598
 }
 ```
 
-Enjoy!
+具体用例见 https://github.com/qinyou/file-server/blob/master/src/main/webapp/test.html  
 
 

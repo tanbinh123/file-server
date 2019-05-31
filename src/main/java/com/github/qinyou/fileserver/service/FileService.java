@@ -3,6 +3,7 @@ package com.github.qinyou.fileserver.service;
 import com.github.qinyou.fileserver.utils.IdUtils;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
+import com.jfinal.kit.StrKit;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 
@@ -14,6 +15,7 @@ public class FileService {
 
     private static Set<String> limitTypes = new HashSet<>();
 
+    private static String basePath;
     private static List<String> imageTypelimit;
     private static String imagePath;
 
@@ -28,6 +30,8 @@ public class FileService {
 
     static {
         Prop prop = PropKit.use("config.txt");
+
+        basePath = prop.get("basePath");
 
         imagePath = prop.get("imagePath");
         imageTypelimit = Arrays.asList(prop.get("imageType").split(","));
@@ -63,10 +67,11 @@ public class FileService {
     /**
      * 获得文件存盘 相对 路径
      *
-     * @param extension 文件后缀
+     * @param extension      文件后缀
+     * @param secondBasePath 二级基础路径 (自定义存盘)
      * @return
      */
-    public static String fileRelativeSavePath(String extension) {
+    public static String fileRelativeSavePath(String extension, String secondBasePath) {
         String path = "/" + new DateTime(new Date()).toString("yyyy_MM_dd");
 
         if (imageTypelimit.contains(extension)) {
@@ -82,21 +87,18 @@ public class FileService {
         }
 
         // 时分秒毫秒+随机数
-        path = path + "/" + IdUtils.id() + "." + extension;
+        if (StrKit.notBlank(secondBasePath)) {
+            path = basePath + "/" + secondBasePath + path + "/" + IdUtils.id() + "." + extension;
+        } else {
+            path = basePath + path + "/" + IdUtils.id() + "." + extension;
+        }
         return path;
     }
-
-    ;
 
 
     public static void deleteFile(File file) {
         if (!file.delete()) {
             log.error("文件{} 未删除成功.", file.getAbsolutePath());
         }
-        ;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(fileRelativeSavePath("jpg"));
     }
 }

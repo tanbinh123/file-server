@@ -1,14 +1,14 @@
-package com.github.qinyou.fileserver.model;
+package com.github.qinyou.fileserver.bean;
 
 import lombok.Data;
 
 /**
- * 单个文件结果封装
+ * 文件上传响应封装
  *
  * @author chuang
  */
 @Data
-public class SingleRet {
+public class ComRet {
 
     private String name;   // 文件原名
     private String path;   // 文件路径

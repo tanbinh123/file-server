@@ -1,9 +1,11 @@
 package com.github.qinyou.fileserver.interceptor;
 
-import com.github.qinyou.fileserver.Constant;
+import com.github.qinyou.fileserver.controller.BaseController;
 import com.github.qinyou.fileserver.service.FileService;
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.i18n.I18n;
+import com.jfinal.i18n.Res;
 import com.jfinal.kit.*;
 import com.jfinal.upload.UploadFile;
 import lombok.extern.slf4j.Slf4j;
@@ -11,21 +13,23 @@ import lombok.extern.slf4j.Slf4j;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 服务授权 验证
- * 加密方式 MD5(MD5(authPwd)+timestamp)
+ * 服务授权验证
+ * token生成方式: MD5(MD5(secret + timestamp)+timestamp)
  *
  * @author chuang
  */
 @Slf4j
-public class UploadInterceptor implements Interceptor {
+public class SecurityInterceptor implements Interceptor {
 
-    private static String authPwd; // 认证密文
-    private static Long authIdle;   // 超时最大数(毫秒)
+    private static String secret; // 认证密文
+    private static Long maxIdle;   // 超时最大数(毫秒)
+    private static Res res;
 
     static {
         Prop prop = PropKit.use("config.txt");
-        authPwd = prop.get("authPwd");
-        authIdle = prop.getInt("authIdle") * 3600 * 1000L;
+        secret = prop.get("secret");
+        maxIdle = prop.getInt("max-idle") * 3600 * 1000L;
+        res = I18n.use(BaseController.lang);
     }
 
 
@@ -35,10 +39,10 @@ public class UploadInterceptor implements Interceptor {
         HttpServletRequest req = invocation.getController().getRequest();
 
         // 认证参数不为空
-        String authToken = req.getParameter("authToken");
+        String authToken = req.getParameter("token");
         if (StrKit.isBlank(authToken)) {
             FileService.deleteFile(uploadFile.getFile());
-            invocation.getController().renderJson(buildFail(Constant.AUTH_TOKEN_EMPTY));
+            invocation.getController().renderJson(buildFail(res.get("TOKEN_EMPTY")));
             return;
         }
 
@@ -46,7 +50,7 @@ public class UploadInterceptor implements Interceptor {
         String timestampStr = req.getParameter("timestamp");
         if (StrKit.isBlank(timestampStr)) {
             FileService.deleteFile(uploadFile.getFile());
-            invocation.getController().renderJson(buildFail(Constant.TIMESTAMP_EMPTY));
+            invocation.getController().renderJson(buildFail(res.get("TIMESTAMP_EMPTY")));
             return;
         }
 
@@ -56,22 +60,22 @@ public class UploadInterceptor implements Interceptor {
             timestamp = Long.parseLong(timestampStr);
         } catch (NumberFormatException e) {
             FileService.deleteFile(uploadFile.getFile());
-            invocation.getController().renderJson(buildFail(Constant.TIMESTAMP_NOTLONG));
+            invocation.getController().renderJson(buildFail(res.get("TIMESTAMP_NOT_LONG")));
             return;
         }
 
-        // 服务器时间戳 - 客户端时间戳 > authIdle 认为 authToken 超时
+        // 服务器时间戳 - 客户端时间戳 > max-idle 认为 authToken 超时
         Long serverTimeStamp = System.currentTimeMillis();
-        if (serverTimeStamp - timestamp > authIdle) {
+        if (serverTimeStamp - timestamp > maxIdle) {
             FileService.deleteFile(uploadFile.getFile());
-            invocation.getController().renderJson(buildFail(Constant.AUTH_TOKEN_TIMEOUT));
+            invocation.getController().renderJson(buildFail(res.get("TOKEN_TIMEOUT")));
             return;
         }
 
-        String realAuthToken = HashKit.md5(HashKit.md5(authPwd + timestamp) + timestamp);
+        String realAuthToken = HashKit.md5(HashKit.md5(secret + timestamp) + timestamp);
         if (!authToken.equals(realAuthToken)) {
             FileService.deleteFile(uploadFile.getFile());
-            invocation.getController().renderJson(buildFail(Constant.AUTH_TOKEN_ERROR));
+            invocation.getController().renderJson(buildFail(res.get("TOKEN_ERROR")));
             return;
         }
 

@@ -8,7 +8,11 @@ import com.jfinal.kit.PropKit;
  */
 public class IdUtils {
     private final static Prop prop = PropKit.use("config.txt");
-    private final static SnowflakeIdWorker idWorker = new SnowflakeIdWorker(prop.getInt("workerId"), prop.getInt("datacenterId"));
+    private final static SnowflakeIdWorker idWorker;
+
+    static {
+        idWorker = new SnowflakeIdWorker(prop.getInt("workerId"), prop.getInt("datacenterId"));
+    }
 
     /**
      * 生成 18 位数字型字符串

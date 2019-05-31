@@ -10,12 +10,17 @@
     </style>
 </head>
 <body>
+
 <h1>测试文件上传 下载</h1>
 <hr>
+
 <input id="img_input" type="file" accept="image/*"/>
 <label for="img_input"></label>
 <div class="preview_box"></div>
+<br>
+应用名(用作存盘路径):<input type="text" name="basePath" id="basePath">
 
+<hr>
 <div id="result"></div>
 
 <button style="margin-top: 50px;margin-bottom: 20px;" onclick="upload()">upload</button>
@@ -25,35 +30,41 @@
 
 
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
 <script>
     function upload() {
-        var form_data = new FormData();
-        var file_data = $("#img_input").prop("files")[0];
+        var fData = new FormData();
+        var file = $("#img_input").prop("files")[0];
 
-        // 设置参数
-        form_data.append("timestamp", "1557284842861");
-        form_data.append("authToken", "eed079688545ca9877e5d0d366104729");
-        form_data.append("file", file_data);
+        // 实际 应从服务器端获取
+        var secret = "fileServerPwd...";
+        var timestamp = new Date().getTime();
+        var token = md5(md5(secret+ timestamp) + timestamp);
+
+        fData.append("timestamp", timestamp);
+        fData.append("token", token);
+        fData.append("file", file);
+        fData.append("basePath", $('#basePath').val());
 
         $.ajax({
-            type: "POST", // 上传文件要用POST
-            url: "http://localhost:8089/file/upload",
+            type: "POST",
+            url: "http://localhost:8089/common/upload",
             dataType: "json",
-            crossDomain: true, // 如果用到跨域，需要后台开启CORS
-            processData: false,  // 注意：不要 process data
-            contentType: false,  // 注意：不设置 contentType
-            data: form_data,
-            success:function(data){
+            crossDomain: true,
+            processData: false,
+            contentType: false,
+            data: fData,
+            success: function (data) {
                 $('#result').html(JSON.stringify(data));
-                console.log(JSON.stringify(data,null, '\t'));
-                if(data.state == 'ok'){
-                    var path = data.data.path.replace(/\//gm,'$');
-                    var alink = "<a target='_blank' href='http://localhost:8089/file/download?path="+path+"&name="+data.data.name+"'>"+data.data.name+" 下载</a>"
+                console.log(JSON.stringify(data, null, '\t'));
+                if (data.state == 'ok') {
+                    var path = data.data.path.replace(/\//gm, '$');
+                    var alink = "<a target='_blank' href='http://localhost:8089/common/download?path=" + path + "&name=" + data.data.name + "'>" + data.data.name + " 下载</a>"
                     $('#download').html(alink);
                 }
 
             },
-            fail:function(x,h,r){
+            fail: function (x, h, r) {
                 alert(x + "  " + h + " " + r);
             }
         });
@@ -62,7 +73,7 @@
     $(function () {
         $("#img_input").on("change", function (e) {
             var file = e.target.files[0];
-            if (file ==undefined || !file.type.match('image.*')) {
+            if (file == undefined || !file.type.match('image.*')) {
                 return false;
             }
             var reader = new FileReader();

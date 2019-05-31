@@ -1,6 +1,7 @@
 package com.github.qinyou.fileserver;
 
-import com.github.qinyou.fileserver.controller.FileController;
+import com.github.qinyou.fileserver.controller.DownloadController;
+import com.github.qinyou.fileserver.controller.UploadController;
 import com.github.qinyou.fileserver.utils.LogBackLogFactory;
 import com.jfinal.config.*;
 import com.jfinal.json.FastJsonFactory;
@@ -20,7 +21,6 @@ public class AppConfig extends JFinalConfig {
     public static void main(String[] args) {
         UndertowServer.create(AppConfig.class)
                 .configWeb(builder -> {
-                    // cors 跨域 filter
                     builder.addFilter("CORS", "com.thetransactioncompany.cors.CORSFilter");
                     builder.addFilterUrlMapping("CORS", "/*");
                     builder.addFilterInitParam("CORS", "cors.allowOrigin", "*");
@@ -60,7 +60,8 @@ public class AppConfig extends JFinalConfig {
      */
     @Override
     public void configRoute(Routes me) {
-        me.add("/file", FileController.class);
+        me.add("/upload", UploadController.class);
+        me.add("/download", DownloadController.class);
     }
 
 
