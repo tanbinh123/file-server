@@ -1,6 +1,7 @@
 package com.github.qinyou.fileserver;
 
 import com.github.qinyou.fileserver.controller.DownloadController;
+import com.github.qinyou.fileserver.controller.ImageUploadController;
 import com.github.qinyou.fileserver.controller.UploadController;
 import com.github.qinyou.fileserver.utils.LogBackLogFactory;
 import com.jfinal.config.*;
@@ -61,6 +62,7 @@ public class AppConfig extends JFinalConfig {
     @Override
     public void configRoute(Routes me) {
         me.add("/upload", UploadController.class);
+        me.add("/imageUpload", ImageUploadController.class);
         me.add("/download", DownloadController.class);
     }
 

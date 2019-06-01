@@ -18,7 +18,7 @@
 <label for="img_input"></label>
 <div class="preview_box"></div>
 <br>
-应用名(用作存盘路径):<input type="text" name="basePath" id="basePath">
+<label for="basePath">应用名(用作存盘路径):</label><input type="text" name="basePath" id="basePath">
 
 <hr>
 <div id="result"></div>
@@ -57,9 +57,9 @@
             success: function (data) {
                 $('#result').html(JSON.stringify(data));
                 console.log(JSON.stringify(data, null, '\t'));
-                if (data.state == 'ok') {
+                if (data.state === 'ok') {
                     var path = data.data.path.replace(/\//gm, '$');
-                    var alink = "<a target='_blank' href='http://localhost:8089/common/download?path=" + path + "&name=" + data.data.name + "'>" + data.data.name + " 下载</a>"
+                    var alink = "<a target='_blank' href='http://localhost:8089/common/download?path=" + path + "&name=" + data.data.name + "'>" + data.data.name + " 下载</a>";
                     $('#download').html(alink);
                 }
 
@@ -73,7 +73,7 @@
     $(function () {
         $("#img_input").on("change", function (e) {
             var file = e.target.files[0];
-            if (file == undefined || !file.type.match('image.*')) {
+            if (file === undefined || !file.type.match('image.*')) {
                 return false;
             }
             var reader = new FileReader();

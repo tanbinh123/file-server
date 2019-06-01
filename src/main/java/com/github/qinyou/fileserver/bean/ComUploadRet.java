@@ -8,7 +8,7 @@ import lombok.Data;
  * @author chuang
  */
 @Data
-public class ComRet {
+public class ComUploadRet {
 
     private String name;   // 文件原名
     private String path;   // 文件路径

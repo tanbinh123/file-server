@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LogBackLog extends Log {
 
-    public static Logger log;
+    private static Logger log;
 
     public LogBackLog(Class<?> clazz) {
         log = LoggerFactory.getLogger(clazz);

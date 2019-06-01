@@ -6,7 +6,7 @@ import com.jfinal.kit.PropKit;
 /**
  * 生成唯一性ID算法的工具类.
  */
-public class IdUtils {
+class IdUtils {
     private final static Prop prop = PropKit.use("config.txt");
     private final static SnowflakeIdWorker idWorker;
 

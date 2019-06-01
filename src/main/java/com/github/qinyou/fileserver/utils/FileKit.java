@@ -1,32 +1,32 @@
-package com.github.qinyou.fileserver.service;
+package com.github.qinyou.fileserver.utils;
 
-import com.github.qinyou.fileserver.utils.IdUtils;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 
 import java.io.File;
 import java.util.*;
 
 @Slf4j
-public class FileService {
+public class FileKit extends FileUtils {
 
-    private static Set<String> limitTypes = new HashSet<>();
+    private static final Set<String> limitTypes = new HashSet<>();
 
-    private static String basePath;
-    private static List<String> imageTypelimit;
-    private static String imagePath;
+    private static final String basePath;
+    private static final List<String> imageTypelimit;
+    private static final String imagePath;
 
-    private static List<String> mediaTypeLimit;
-    private static String mediaPath;
+    private static final List<String> mediaTypeLimit;
+    private static final String mediaPath;
 
-    private static List<String> officeTypeLimit;
-    private static String officePath;
+    private static final List<String> officeTypeLimit;
+    private static final String officePath;
 
-    private static List<String> fileTypeLimit;
-    private static String filePath;
+    private static final List<String> fileTypeLimit;
+    private static final String filePath;
 
     static {
         Prop prop = PropKit.use("config.txt");
@@ -57,11 +57,9 @@ public class FileService {
      * @return true 合法，false 非法
      */
     public static boolean checkFileType(String extension) {
-        boolean flag = false;
         return limitTypes.contains(extension);
     }
 
-    ;
 
 
     /**
@@ -76,7 +74,7 @@ public class FileService {
 
         if (imageTypelimit.contains(extension)) {
             path = imagePath + path;
-        } else if (mediaPath.contains(extension)) {
+        } else if (mediaTypeLimit.contains(extension)) {
             path = mediaPath + path;
         } else if (officeTypeLimit.contains(extension)) {
             path = officePath + path;

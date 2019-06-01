@@ -7,12 +7,27 @@ import com.jfinal.kit.Ret;
 public class BaseController extends Controller {
     public final static String lang = PropKit.use("config.txt").get("lang");
 
-    public void renderFail(String msg) {
+
+    /**
+     * 获得上下文路径
+     * @return
+     */
+    String getContextPath(){
+        StringBuffer url = getRequest().getRequestURL();
+        return url.delete(url.length() - getRequest().getRequestURI().length(), url.length())
+                .append(getRequest().getServletContext().getContextPath()).append("/").toString();
+    }
+    void renderRet(Ret ret) {
+        ret.set("timestamp", System.currentTimeMillis());
+        renderJson(ret);
+    }
+
+    void renderFail(String msg) {
         Ret ret = Ret.create().setFail().set("msg", msg).set("timestamp", System.currentTimeMillis());
         renderJson(ret);
     }
 
-    public void renderOk(Object data) {
+    void renderOk(Object data) {
         Ret ret = Ret.create().setOk().set("data", data).set("timestamp", System.currentTimeMillis());
         renderJson(ret);
     }
