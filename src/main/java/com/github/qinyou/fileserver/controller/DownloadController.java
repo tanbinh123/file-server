@@ -26,7 +26,7 @@ public class DownloadController extends BaseController {
             renderFail(res.get("PATH_EMPTY"));
             return;
         }
-        path = path.replace("$", "/");
+        path = path.replace("$", "/");// path 参数 用 $ 代替 /
         path = PathKit.getWebRootPath() + "/" + path;
         File downloadFile = new File(path);
         if (!downloadFile.exists()) {

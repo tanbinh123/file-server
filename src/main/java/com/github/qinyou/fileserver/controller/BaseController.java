@@ -10,13 +10,15 @@ public class BaseController extends Controller {
 
     /**
      * 获得上下文路径
+     *
      * @return
      */
-    String getContextPath(){
+    String getContextPath() {
         StringBuffer url = getRequest().getRequestURL();
         return url.delete(url.length() - getRequest().getRequestURI().length(), url.length())
                 .append(getRequest().getServletContext().getContextPath()).append("/").toString();
     }
+
     void renderRet(Ret ret) {
         ret.set("timestamp", System.currentTimeMillis());
         renderJson(ret);

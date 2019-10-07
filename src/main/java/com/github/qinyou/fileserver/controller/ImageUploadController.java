@@ -10,14 +10,13 @@ import com.jfinal.i18n.I18n;
 import com.jfinal.i18n.Res;
 import com.jfinal.kit.PathKit;
 import com.jfinal.kit.Ret;
-import com.jfinal.kit.StrKit;
 import com.jfinal.upload.UploadFile;
 import net.coobird.thumbnailator.geometry.Positions;
 
 import java.io.File;
 
 /**
- * 图片上传，缩放、裁剪、水印等
+ * 图片上传，缩放、水印等
  *
  * @author chuang
  */
@@ -27,14 +26,13 @@ public class ImageUploadController extends BaseController {
     private static final Res res = I18n.use(lang);
 
     /**
-     * 等比例 生成缩略图
-     * 图片类型需要调用方自己控制
+     * 图片 等比例缩放
      */
     @ActionKey("/image/upload/resize")
     public void resize() {
         int width = getParaToInt("width", 100); // 默认缩放 到 宽 100
         UploadFile uploadFile = getFile("file");
-        String basePath = get("basePath");
+        String basePath = get("basePath");  // 自定义存盘基路径
 
         Ret ret = UploadService.imgUploadResize(uploadFile, basePath, width);
         if (ret.isOk()) {
@@ -47,23 +45,19 @@ public class ImageUploadController extends BaseController {
 
     /**
      * 图片加水印
-     * 图片类型需要调用方自己控制
      */
     @ActionKey("/image/upload/watermark")
     public void watermark() {
         UploadFile uploadFile = getFile("file");
-        String basePath = get("basePath");
+        String basePath = get("basePath");  // 自定义存盘基路径
 
-        String watermark = get("watermark"); // 水印图片名
-        String position = get("position", "center");  // 位置
-        String tp = get("tp", "0.25"); // 透明度
+        String watermark = get("watermark", "default"); // 水印图片名
+        String position = get("position", "center");   // 位置
+        String opacity = get("opacity", "0.25");       // 透明度
 
-        String waterImgPath;
-        if (StrKit.isBlank(watermark)) {
-            waterImgPath = PathKit.getRootClassPath() + "/watermark/" + watermark + ".png";
-        } else {
-            waterImgPath = PathKit.getRootClassPath() + "/watermark/duck.png";
-        }
+        String waterImgPath = PathKit.getRootClassPath() + "/watermark/" + watermark + ".png";
+        ;
+
         if (!new File(waterImgPath).exists()) {
             renderFail(res.get("WATERMARK_NOT_EXIST"));
             return;
@@ -91,7 +85,7 @@ public class ImageUploadController extends BaseController {
                 break;
         }
 
-        Ret ret = UploadService.imgUploadWatermark(uploadFile, basePath, watermark, waterImgPath, positions, Float.parseFloat(tp));
+        Ret ret = UploadService.imgUploadWatermark(uploadFile, basePath, watermark, waterImgPath, positions, Float.parseFloat(opacity));
         if (ret.isOk()) {
             renderImgResponse(ret);
         } else {

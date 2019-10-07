@@ -11,7 +11,7 @@ class IdUtils {
     private final static SnowflakeIdWorker idWorker;
 
     static {
-        idWorker = new SnowflakeIdWorker(prop.getInt("workerId"), prop.getInt("datacenterId"));
+        idWorker = new SnowflakeIdWorker(prop.getInt("workerId"), prop.getInt("dataCenterId"));
     }
 
     /**

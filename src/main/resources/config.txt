@@ -1,29 +1,30 @@
-# 开发模式
+### 开发模式
 devMode=true
-# 语言
+
+### 语言
 lang=en_US
 
-# id 生成算法使用 (集群部署应该修改此处，均 0~31)
+### id 生成算法使用 ( 集群部署应该修改此处，均 0~31 )
 workerId=0
-datacenterId=0
+dataCenterId=0
 
-# 服务授权使用
-#  密钥
+### 服务授权使用
+#1. 加密密钥
 secret=fileServerPwd...
-#  最大超时时间 h
+#2. 超时时间，单位 小时(h)
 max-idle=24
 
 
-# 文件上传下载配置
+### 文件上传下载配置
 uploadPath=upload
-#  10M
+#1. 文件最大10M限制
 maxPostSize=102400000
-#  类型限制
+#2. 文件类型限制
 imageType=png,jpg,jpeg,gif,bmp
 mediaType=swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb,mp4
 officeType=doc,docx,pdf,xls,xlsx,csv,ppt,pptx,
 fileType=htm,html,xml,txt,zip,rar,gz,bz2
-#  存盘路径
+#3. 文件存盘路径
 basePath=upload
 imagePath=/image
 mediaPath=/media

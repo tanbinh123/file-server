@@ -61,9 +61,8 @@ public class FileKit extends FileUtils {
     }
 
 
-
     /**
-     * 获得文件存盘 相对 路径
+     * 获得文件存盘 相对路径
      *
      * @param extension      文件后缀
      * @param secondBasePath 二级基础路径 (自定义存盘)
@@ -94,6 +93,11 @@ public class FileKit extends FileUtils {
     }
 
 
+    /**
+     * 文件删除
+     *
+     * @param file 文件对象
+     */
     public static void deleteFile(File file) {
         if (!file.delete()) {
             log.error("文件{} 未删除成功.", file.getAbsolutePath());

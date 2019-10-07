@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class SecurityInterceptor implements Interceptor {
 
-    private static final String secret; // 认证密文
+    private static final String secret;  // 认证密文
     private static final Long maxIdle;   // 超时最大数(毫秒)
     private static final Res res;
 

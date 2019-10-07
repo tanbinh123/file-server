@@ -11,7 +11,7 @@ import com.jfinal.upload.UploadFile;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 文件上传下载
+ * 文件上传
  *
  * @author chuang
  */
@@ -22,13 +22,13 @@ public class UploadController extends BaseController {
      * 单文件上传
      */
     @ActionKey("/common/upload")
-    public void upload(){
+    public void upload() {
         UploadFile uploadFile = getFile("file");
-        String basePath = get("basePath");
+        String basePath = get("basePath"); // 自定义存盘基路径
         Ret ret = UploadService.upload(uploadFile, basePath);
-        if(ret.isOk()){
+        if (ret.isOk()) {
             ComUploadRet uploadRet = (ComUploadRet) ret.get("data");
-            uploadRet.setUri(getContextPath()+uploadRet.getPath());
+            uploadRet.setUri(getContextPath() + uploadRet.getPath());
         }
         renderRet(ret);
     }
