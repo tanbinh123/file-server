@@ -1,10 +1,10 @@
 # file-server
-一个独立运行，支持文件跨域上传、下载的 web server。多应用环境下公共服务。
+A stand-alone Java Web application that support cross-domain file upload and download, it can be used as file server in multi application scenarios.
 
-1. 密钥授权机制 md5( md5( secret+timestamp ) + timestamp ) 
-2. 分应用、分文件类型、分日期存盘 ，多语言响应提示信息
+1. Token encryption: md5(md5(SECRET+timestamp)+timestamp).
+2. Save path distinguish application, file type and upload date, response support i18n.
 
-#### 编译启动
+#### Quick Start
 
 ```Shell
 git clone https://github.com/qinyou/file-server.git
@@ -14,12 +14,12 @@ cd target/file-server-release/file-server
 start.bat 或 start.sh
 ```
 
-#### 调用方式 
-1. 公共上传   http://localhost:8089/common/upload  
-2. 公共下载   http://localhost:8089/common/download  
-3. 更多自行扩展...
+#### Api Url
+1. common upload     http://{server}:{port}/common/upload  
+2. common download   http://{server}:{port}/common/download  
+3. more self-expanding...
 
-上传成功响应:
+upload success response:
 
 ```Json
 {
@@ -35,6 +35,7 @@ start.bat 或 start.sh
 }
 ```
 
-具体用例见 https://github.com/qinyou/file-server/blob/master/src/main/webapp/test.html  
+more example  
+https://github.com/qinyou/file-server/blob/master/src/main/webapp/test.html  
 
 
