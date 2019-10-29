@@ -4,17 +4,17 @@ A stand-alone Java Web application that support cross-domain file upload and dow
 1. token encryption: md5(md5(SECRET+timestamp)+timestamp).
 2. save path distinguish application, file type and upload date, response support i18n.
 
-#### quick start
+#### Quick start
 
 ```Shell
 git clone https://github.com/qinyou/file-server.git
 cd file-server
 mvn clean package
 cd target/file-server-release/file-server
-start.bat 或 start.sh
+start.bat or start.sh
 ```
 
-#### api url
+#### Api url
 1. common upload     http://{server}:{port}/common/upload  
 2. common download   http://{server}:{port}/common/download  
 3. more self-expanding...
